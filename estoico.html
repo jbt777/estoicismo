@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Diario Estoico">
+<meta name="theme-color" content="#0d0b09">
+<meta name="description" content="366 meditaciones sobre la sabiduría, la perseverancia y el arte de vivir">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<title>Diario Estoico — 366 Meditaciones</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0d0b09;
+  --bg-card:#151210;
+  --bg-elevated:#1a1714;
+  --gold:#c9a84c;
+  --gold-dim:#8a7234;
+  --gold-bright:#e8c85a;
+  --text:#d4cdc0;
+  --text-dim:#8a8279;
+  --text-quote:#f0ead8;
+  --accent:#6b4c2a;
+  --border:#2a2420;
+  --border-light:#3a3228;
+  --safe-top:env(safe-area-inset-top, 0px);
+  --safe-bottom:env(safe-area-inset-bottom, 0px);
+}
+
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'EB Garamond',Georgia,serif;
+  min-height:100vh;
+  min-height:100dvh;
+  line-height:1.7;
+  overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+  padding-top:var(--safe-top);
+  padding-bottom:var(--safe-bottom);
+}
+
+/* Noise overlay */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9999;opacity:0.4;
+}
+
+/* Gold top border */
+.top-border{
+  height:3px;
+  background:linear-gradient(90deg,transparent,var(--gold-dim),var(--gold),var(--gold-dim),transparent);
+  position:fixed;top:var(--safe-top);left:0;right:0;z-index:100;
+}
+
+/* Header */
+.header{text-align:center;padding:2.5rem 1.5rem 1.2rem;position:relative}
+.header::after{
+  content:'';display:block;width:100px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);
+  margin:1rem auto 0;
+}
+.header h1{
+  font-family:'Cinzel',serif;font-weight:400;
+  font-size:clamp(1.4rem,4.5vw,2.2rem);
+  color:var(--gold);letter-spacing:0.12em;text-transform:uppercase;
+}
+.header .subtitle{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:clamp(0.82rem,2vw,1rem);color:var(--text-dim);
+  margin-top:0.3rem;letter-spacing:0.04em;
+}
+
+/* Navigation */
+.nav{
+  display:flex;align-items:center;justify-content:center;
+  gap:0.6rem;padding:1rem 0.8rem;flex-wrap:wrap;
+}
+.nav-btn{
+  background:none;border:1px solid var(--border);
+  color:var(--gold-dim);font-family:'Cinzel',serif;
+  font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.45rem 0.9rem;cursor:pointer;
+  transition:all 0.3s ease;border-radius:2px;
+  -webkit-appearance:none;
+}
+.nav-btn:hover,.nav-btn:active,.nav-btn.active{
+  border-color:var(--gold);color:var(--gold);
+  background:rgba(201,168,76,0.08);
+}
+
+/* Progress */
+.progress-bar{
+  max-width:680px;margin:0 auto;padding:0 1.5rem;
+  display:flex;align-items:center;gap:0.7rem;margin-bottom:1.2rem;
+}
+.progress-track{flex:1;height:2px;background:var(--border);border-radius:1px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gold-dim);transition:width 0.5s ease}
+.progress-text{
+  font-family:'Cinzel',serif;font-size:0.55rem;
+  letter-spacing:0.08em;color:var(--text-dim);white-space:nowrap;
+}
+
+/* Card */
+.card-container{max-width:680px;margin:0 auto;padding:0 1rem 3rem}
+
+.card{
+  background:var(--bg-card);border:1px solid var(--border);
+  position:relative;padding:2.2rem 1.8rem;
+  opacity:0;transform:translateY(16px);
+  animation:fadeIn 0.5s ease forwards;
+}
+@keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
+
+.card::before,.card::after{
+  content:'';position:absolute;width:16px;height:16px;
+  border-color:var(--gold-dim);border-style:solid;
+}
+.card::before{top:7px;left:7px;border-width:1px 0 0 1px}
+.card::after{bottom:7px;right:7px;border-width:0 1px 1px 0}
+
+.card-date{
+  font-family:'Cinzel',serif;font-size:0.65rem;
+  letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--gold-dim);text-align:center;margin-bottom:0.3rem;
+}
+.card-theme{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:0.8rem;color:var(--text-dim);text-align:center;margin-bottom:1.2rem;
+}
+.card-title{
+  font-family:'Cinzel',serif;font-size:clamp(1.1rem,3vw,1.5rem);
+  font-weight:500;color:var(--gold);text-align:center;
+  margin-bottom:1.6rem;line-height:1.4;
+}
+
+/* Divider */
+.divider{
+  display:flex;align-items:center;justify-content:center;
+  gap:0.7rem;margin:1.5rem 0;color:var(--gold-dim);
+}
+.divider::before,.divider::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,transparent,var(--border-light),transparent);
+}
+.divider-symbol{font-size:0.85rem}
+
+/* Quote */
+.quote-section{position:relative;padding:1.2rem 0;margin-bottom:0.3rem}
+.quote-mark{
+  font-family:'Cormorant Garamond',serif;font-size:3.5rem;
+  color:var(--gold-dim);opacity:0.25;line-height:1;
+  position:absolute;top:-0.3rem;left:-0.3rem;
+}
+.quote-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(0.95rem,2.5vw,1.12rem);
+  font-style:italic;color:var(--text-quote);line-height:1.8;padding-left:1.2rem;
+}
+.quote-author{
+  font-family:'Cinzel',serif;font-size:0.62rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--gold-dim);text-align:right;margin-top:0.8rem;
+}
+
+/* Explanation */
+.explanation{
+  font-size:clamp(0.92rem,2vw,1.02rem);color:var(--text);
+  line-height:1.8;text-align:justify;hyphens:auto;
+}
+
+/* Calendar */
+.calendar{max-width:860px;margin:0 auto;padding:0 1rem 3rem;display:none}
+.calendar-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;
+}
+.month-section{background:var(--bg-card);border:1px solid var(--border);padding:1rem}
+.month-title{
+  font-family:'Cinzel',serif;font-size:0.72rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--gold);text-align:center;margin-bottom:0.7rem;
+  padding-bottom:0.4rem;border-bottom:1px solid var(--border);
+}
+.days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.day-cell{
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-family:'EB Garamond',serif;font-size:0.75rem;
+  color:var(--text-dim);cursor:pointer;border-radius:2px;
+  transition:all 0.2s ease;border:1px solid transparent;position:relative;
+}
+.day-cell:active{border-color:var(--gold-dim);color:var(--gold);background:rgba(201,168,76,0.06)}
+.day-cell.today{
+  border-color:var(--gold);color:var(--gold);
+  background:rgba(201,168,76,0.12);font-weight:600;
+}
+
+/* Footer */
+.footer{text-align:center;padding:1.5rem;border-top:1px solid var(--border);margin-top:1.5rem}
+.footer p{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:0.8rem;color:var(--text-dim);
+}
+
+/* Share/Bookmark button */
+.action-bar{
+  display:flex;justify-content:center;gap:1rem;
+  padding:1rem 0 0;
+}
+.action-btn{
+  background:none;border:1px solid var(--border);
+  color:var(--gold-dim);font-family:'Cinzel',serif;
+  font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;
+  padding:0.4rem 0.8rem;cursor:pointer;border-radius:2px;
+  transition:all 0.3s;display:flex;align-items:center;gap:0.4rem;
+  -webkit-appearance:none;
+}
+.action-btn:active{border-color:var(--gold);color:var(--gold)}
+.action-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.5}
+
+/* Toast notification */
+.toast{
+  position:fixed;bottom:calc(2rem + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(100px);
+  background:var(--bg-elevated);border:1px solid var(--gold-dim);
+  color:var(--gold);font-family:'Cinzel',serif;font-size:0.7rem;
+  letter-spacing:0.08em;padding:0.6rem 1.2rem;border-radius:4px;
+  z-index:200;opacity:0;transition:all 0.4s ease;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Responsive */
+@media(max-width:420px){
+  .card{padding:1.6rem 1.2rem}
+  .nav{gap:0.4rem}
+  .nav-btn{padding:0.35rem 0.6rem;font-size:0.58rem}
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:3px}
+
+/* Selection */
+::selection{background:rgba(201,168,76,0.2);color:var(--gold-bright)}
+</style>
+</head>
+<body>
+
+<div class="top-border"></div>
+
+<header class="header">
+  <h1>Diario Estoico</h1>
+  <p class="subtitle">366 meditaciones sobre la sabiduría, la perseverancia y el arte de vivir</p>
+</header>
+
+<nav class="nav">
+  <button class="nav-btn" onclick="prevDay()" aria-label="Día anterior">◂ Anterior</button>
+  <button class="nav-btn active" onclick="goToday()" id="btnToday">Hoy</button>
+  <button class="nav-btn" onclick="toggleCalendar()" id="btnCalendar">Calendario</button>
+  <button class="nav-btn" onclick="randomEntry()">Aleatorio</button>
+  <button class="nav-btn" onclick="nextDay()" aria-label="Día siguiente">Siguiente ▸</button>
+</nav>
+
+<div class="progress-bar" id="progressBar">
+  <span class="progress-text" id="progressText">Día 1 / 366</span>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+  </div>
+</div>
+
+<main class="card-container" id="cardView">
+  <article class="card" id="card">
+    <div class="card-date" id="cardDate"></div>
+    <div class="card-theme" id="cardTheme"></div>
+    <h2 class="card-title" id="cardTitle"></h2>
+    <div class="quote-section">
+      <span class="quote-mark">&#8220;</span>
+      <p class="quote-text" id="quoteText"></p>
+      <p class="quote-author" id="quoteAuthor"></p>
+    </div>
+    <div class="divider"><span class="divider-symbol">&#10043;</span></div>
+    <div class="explanation" id="explanation"></div>
+    <div class="action-bar">
+      <button class="action-btn" onclick="shareEntry()" id="shareBtn">
+        <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+        Compartir
+      </button>
+      <button class="action-btn" onclick="toggleBookmark()">
+        <svg viewBox="0 0 24 24" id="bookmarkIcon"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        <span id="bookmarkText">Guardar</span>
+      </button>
+    </div>
+  </article>
+</main>
+
+<section class="calendar" id="calendarView"></section>
+
+<footer class="footer">
+  <p>«La filosofía es la medicina del alma» — Marco Aurelio</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="entries.js"></script>
+<script>
+const THEMES = {"1":"Claridad","2":"Pasiones y emociones","3":"Conciencia","4":"Pensamiento imparcial","5":"Acción correcta","6":"Resolución de problemas","7":"Deber","8":"Pragmatismo","9":"Fortaleza y resiliencia","10":"Virtud y bondad","11":"Aceptación / Amor fati","12":"Meditación sobre la mortalidad"};
+const MONTH_NAMES = ["","Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+let currentIndex = 0;
+let calendarOpen = false;
+let bookmarks = JSON.parse(localStorage.getItem('de_bookmarks') || '[]');
+
+function findEntryIndex(month, day) {
+  return ENTRIES.findIndex(e => e.month === month && e.day === day);
+}
+
+function getTodayIndex() {
+  const now = new Date();
+  const idx = findEntryIndex(now.getMonth() + 1, now.getDate());
+  return idx >= 0 ? idx : 0;
+}
+
+function extractAuthor(quote) {
+  const authors = ['EPICTETO','SÉNECA','MARCO AURELIO','MUSONIO RUFO','DIÓGENES LAERCIO','HERÁCLITO','PLUTARCO','HECATÓN','CLEANTES','CRISIPO','ZENÓN','EURÍPIDES'];
+  for (const a of authors) {
+    const idx = quote.indexOf(a);
+    if (idx !== -1) {
+      return { text: quote.substring(0, idx).trim(), author: quote.substring(idx).trim() };
+    }
+  }
+  return { text: quote, author: '' };
+}
+
+function showEntry(index) {
+  if (index < 0) index = ENTRIES.length - 1;
+  if (index >= ENTRIES.length) index = 0;
+  currentIndex = index;
+
+  const e = ENTRIES[index];
+  const { text, author } = extractAuthor(e.quote);
+
+  const card = document.getElementById('card');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = 'fadeIn 0.5s ease forwards';
+
+  document.getElementById('cardDate').textContent = `${e.day} de ${MONTH_NAMES[e.month]}`;
+  document.getElementById('cardTheme').textContent = THEMES[e.month] || '';
+  document.getElementById('cardTitle').textContent = e.title;
+  document.getElementById('quoteText').textContent = text;
+  document.getElementById('quoteAuthor').textContent = author ? '— ' + author : '';
+  document.getElementById('explanation').textContent = e.explanation;
+
+  document.getElementById('progressText').textContent = `Día ${index + 1} / 366`;
+  document.getElementById('progressFill').style.width = `${((index + 1) / 366) * 100}%`;
+
+  const todayIdx = getTodayIndex();
+  document.getElementById('btnToday').classList.toggle('active', index === todayIdx);
+
+  // Bookmark state
+  updateBookmarkUI();
+
+  if (calendarOpen) toggleCalendar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Mark as read
+  const readDays = JSON.parse(localStorage.getItem('de_read') || '[]');
+  const key = `${e.month}-${e.day}`;
+  if (!readDays.includes(key)) {
+    readDays.push(key);
+    localStorage.setItem('de_read', JSON.stringify(readDays));
+  }
+}
+
+function updateBookmarkUI() {
+  const e = ENTRIES[currentIndex];
+  const key = `${e.month}-${e.day}`;
+  const isBookmarked = bookmarks.includes(key);
+  document.getElementById('bookmarkText').textContent = isBookmarked ? 'Guardado' : 'Guardar';
+  const icon = document.getElementById('bookmarkIcon');
+  icon.style.fill = isBookmarked ? 'var(--gold-dim)' : 'none';
+}
+
+function toggleBookmark() {
+  const e = ENTRIES[currentIndex];
+  const key = `${e.month}-${e.day}`;
+  const idx = bookmarks.indexOf(key);
+  if (idx >= 0) {
+    bookmarks.splice(idx, 1);
+    showToast('Meditación eliminada');
+  } else {
+    bookmarks.push(key);
+    showToast('Meditación guardada ✦');
+  }
+  localStorage.setItem('de_bookmarks', JSON.stringify(bookmarks));
+  updateBookmarkUI();
+}
+
+function prevDay() { showEntry(currentIndex - 1); }
+function nextDay() { showEntry(currentIndex + 1); }
+function goToday() { showEntry(getTodayIndex()); }
+function randomEntry() { showEntry(Math.floor(Math.random() * ENTRIES.length)); }
+
+async function shareEntry() {
+  const e = ENTRIES[currentIndex];
+  const { text } = extractAuthor(e.quote);
+  const shareData = {
+    title: `Diario Estoico — ${e.title}`,
+    text: `«${text.substring(0, 200)}...»\n\n${e.title} — ${e.day} de ${MONTH_NAMES[e.month]}`,
+  };
+  if (navigator.share) {
+    try { await navigator.share(shareData); } catch {}
+  } else {
+    await navigator.clipboard.writeText(shareData.text);
+    showToast('Copiado al portapapeles');
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function toggleCalendar() {
+  calendarOpen = !calendarOpen;
+  const cv = document.getElementById('calendarView');
+  const cardV = document.getElementById('cardView');
+  const pb = document.getElementById('progressBar');
+
+  if (calendarOpen) {
+    cv.style.display = 'block';
+    cardV.style.display = 'none';
+    pb.style.display = 'none';
+    document.getElementById('btnCalendar').classList.add('active');
+    buildCalendar();
+  } else {
+    cv.style.display = 'none';
+    cardV.style.display = 'block';
+    pb.style.display = 'flex';
+    document.getElementById('btnCalendar').classList.remove('active');
+  }
+}
+
+function buildCalendar() {
+  const cv = document.getElementById('calendarView');
+  const now = new Date();
+  const todayM = now.getMonth() + 1;
+  const todayD = now.getDate();
+
+  let html = '<div class="calendar-grid">';
+  for (let m = 1; m <= 12; m++) {
+    const daysInMonth = m === 2 ? 29 : [0,31,28,31,30,31,30,31,31,30,31,30,31][m];
+    html += `<div class="month-section"><div class="month-title">${MONTH_NAMES[m]} · ${THEMES[m]||''}</div><div class="days-grid">`;
+    for (let d = 1; d <= daysInMonth; d++) {
+      const isToday = (m === todayM && d === todayD);
+      html += `<div class="day-cell${isToday?' today':''}" onclick="calendarSelect(${m},${d})">${d}</div>`;
+    }
+    html += '</div></div>';
+  }
+  html += '</div>';
+  cv.innerHTML = html;
+}
+
+function calendarSelect(m, d) {
+  const idx = findEntryIndex(m, d);
+  if (idx >= 0) showEntry(idx);
+}
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft') prevDay();
+  else if (e.key === 'ArrowRight') nextDay();
+  else if (e.key === 'r' || e.key === 'R') randomEntry();
+  else if (e.key === 'h' || e.key === 'H') goToday();
+});
+
+// Touch swipe
+let touchStartX = 0;
+let touchStartY = 0;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.changedTouches[0].screenX;
+  touchStartY = e.changedTouches[0].screenY;
+}, { passive: true });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].screenX - touchStartX;
+  const dy = e.changedTouches[0].screenY - touchStartY;
+  if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+    if (dx > 0) prevDay(); else nextDay();
+  }
+}, { passive: true });
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+
+// Init
+showEntry(getTodayIndex());
+</script>
+</body>
+</html>
